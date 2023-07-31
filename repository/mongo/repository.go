@@ -19,6 +19,7 @@ type mongoRepository struct {
 	timeout  time.Duration
 }
 
+// newMongoClient creates a new mongo client
 func newMongoClient(mongoURL string, mongoTimeout int) (*mongo.Client, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(mongoTimeout)*time.Second)
 	defer cancel()
@@ -36,6 +37,7 @@ func newMongoClient(mongoURL string, mongoTimeout int) (*mongo.Client, error) {
 	return client, nil
 }
 
+// NewMongoRepository creates a new mongo repository
 func NewMongoRepository(mongoURL, mongoDB string, mongoTimeout int) (shortener.RedirectRepository, error) {
 	repo := &mongoRepository{
 		timeout:  time.Duration(mongoTimeout) * time.Second,
@@ -49,6 +51,7 @@ func NewMongoRepository(mongoURL, mongoDB string, mongoTimeout int) (shortener.R
 	return repo, nil
 }
 
+// Find finds a redirect by code
 func (r *mongoRepository) Find(code string) (*shortener.Redirect, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), r.timeout)
 	defer cancel()
@@ -67,6 +70,7 @@ func (r *mongoRepository) Find(code string) (*shortener.Redirect, error) {
 	return redirect, nil
 }
 
+// Store stores a redirect and return and error if any
 func (r *mongoRepository) Store(redirect *shortener.Redirect) error {
 	ctx, cancel := context.WithTimeout(context.Background(), r.timeout)
 	defer cancel()

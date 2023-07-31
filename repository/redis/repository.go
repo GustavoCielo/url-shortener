@@ -13,6 +13,7 @@ type redisRepository struct {
 	client *redis.Client
 }
 
+// newRedisClient creates a new redis client
 func newRedisClient(redisURL string) (*redis.Client, error) {
 	opts, err := redis.ParseURL(redisURL)
 
@@ -31,6 +32,7 @@ func newRedisClient(redisURL string) (*redis.Client, error) {
 	return client, err
 }
 
+// NewRedisRepository creates a new redis repository
 func NewRedisRepository(redisURL string) (shortener.RedirectRepository, error) {
 	repo := &redisRepository{}
 	client, err := newRedisClient(redisURL)
@@ -42,10 +44,12 @@ func NewRedisRepository(redisURL string) (shortener.RedirectRepository, error) {
 	return repo, nil
 }
 
+// generateKey generates a key
 func (r *redisRepository) generateKey(code string) string {
 	return fmt.Sprintf("redirect:%s", code)
 }
 
+// Find finds a redirect by code
 func (r *redisRepository) Find(code string) (*shortener.Redirect, error) {
 	redirect := &shortener.Redirect{}
 	key := r.generateKey(code)
@@ -66,6 +70,7 @@ func (r *redisRepository) Find(code string) (*shortener.Redirect, error) {
 	return redirect, nil
 }
 
+// Store stores a redirect
 func (r *redisRepository) Store(redirect *shortener.Redirect) error {
 	key := r.generateKey(redirect.Code)
 	data := map[string]interface{}{

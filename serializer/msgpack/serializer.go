@@ -8,6 +8,7 @@ import (
 
 type Redirect struct{}
 
+// Decode is used to decode the msgpack data
 func (r *Redirect) Decode(input []byte) (*shortener.Redirect, error) {
 	redirect := &shortener.Redirect{}
 	if err := msgpack.Unmarshal(input, redirect); err != nil {
@@ -16,6 +17,7 @@ func (r *Redirect) Decode(input []byte) (*shortener.Redirect, error) {
 	return redirect, nil
 }
 
+// Encode is used to encode the msgpack data
 func (r *Redirect) Encode(input *shortener.Redirect) ([]byte, error) {
 	rawMsg, err := msgpack.Marshal(input)
 	if err != nil {

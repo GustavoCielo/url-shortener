@@ -18,16 +18,19 @@ type redirectService struct {
 	redirectRepo RedirectRepository
 }
 
+// NewRedirectService returns a new RedirectService
 func NewRedirectService(redirectRepo RedirectRepository) RedirectService {
 	return &redirectService{
 		redirectRepo,
 	}
 }
 
+// Find returns a redirect by code
 func (r *redirectService) Find(code string) (*Redirect, error) {
 	return r.redirectRepo.Find(code)
 }
 
+// Store stores a redirect and returns an error if any
 func (r *redirectService) Store(redirect *Redirect) error {
 	if err := validate.Validate(redirect); err != nil {
 		return errs.Wrap(ErrRedirectInvalid, "service.Redirect.Store")

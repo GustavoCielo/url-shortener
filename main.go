@@ -17,6 +17,7 @@ import (
 	"github.com/go-chi/chi/middleware"
 )
 
+// main executes two go routines, one to listen and serve http requests and another to listen for signals.
 func main() {
 	repo := chooseRepo()
 	service := shortener.NewRedirectService(repo)
@@ -49,6 +50,7 @@ func main() {
 	fmt.Printf("Terminated %s", <-errs)
 }
 
+// httpPort returns the port to listen
 func httpPort() string {
 	port := "8000"
 	if os.Getenv("PORT") != "" {
@@ -57,6 +59,7 @@ func httpPort() string {
 	return fmt.Sprintf(":%s", port)
 }
 
+// chooseRepo returns the repository to use, varying between mongo or redis
 func chooseRepo() shortener.RedirectRepository {
 	switch os.Getenv("URL_DB") {
 	case "redis":

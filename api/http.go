@@ -21,10 +21,12 @@ type handler struct {
 	redirectService shortener.RedirectService
 }
 
+// NewHandler creates a new RedirectHandler
 func NewHandler(redirectService shortener.RedirectService) RedirectHandler {
 	return &handler{redirectService: redirectService}
 }
 
+// setupResponse sets up the response object, based on contentType
 func setupResponse(w http.ResponseWriter, contentType string, body []byte, statusCode int) {
 	w.Header().Set("Content-Type", contentType)
 	w.WriteHeader(statusCode)
@@ -34,6 +36,7 @@ func setupResponse(w http.ResponseWriter, contentType string, body []byte, statu
 	}
 }
 
+// serializer returns the serializer based on the contentType
 func (h *handler) serializer(contentType string) shortener.RedirectSerializer {
 	if contentType == "application/x-msgpack" {
 		return &ms.Redirect{}
@@ -41,6 +44,7 @@ func (h *handler) serializer(contentType string) shortener.RedirectSerializer {
 	return &js.Redirect{}
 }
 
+// Get redirects to the original URL
 func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 	code := chi.URLParam(r, "code")
 	redirect, err := h.redirectService.Find(code)
@@ -55,6 +59,7 @@ func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, redirect.URL, http.StatusMovedPermanently)
 }
 
+// Post creates a new redirect and call the Store method
 func (h *handler) Post(w http.ResponseWriter, r *http.Request) {
 	contentType := r.Header.Get("Content-Type")
 	requestBody, err := io.ReadAll(r.Body)
